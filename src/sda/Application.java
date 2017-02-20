@@ -1,7 +1,6 @@
 package sda;
 
 import sda.workers.AbstractEmployee;
-import sda.workers.Employee;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +67,9 @@ public class Application {
                 .forEach(e -> System.out.println(e));
         //10. posortuj po salary
         System.out.println();
-        employeeList.sort((e1, e2) -> e1.getSalary() > e2.getSalary() ? 1 : -1);
+        employeeList.sort((e1, e2) ->
+                e1.getSalary() > e2.getSalary() ? 1 :
+                e1.getSalary() == e2.getSalary() ? 0 : -1);
         employeeList.forEach(e -> System.out.println(e.getFirstName() + ": " + e.getSalary()));
         //11. wyswietl employee ktory zarabia najwiecej
         System.out.println();
