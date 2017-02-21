@@ -3,6 +3,7 @@ package sda.finances;
 import sda.finances.model.Expense;
 import sda.finances.model.Product;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,83 @@ public class Application {
                             .forEach(product -> System.out.println(product));
                 });
         //3. wyswietlamy tylko banany
+        double banan = expenses.stream()
+                .mapToDouble(expense -> expense.getProducts()
+                        .stream()
+                        .filter(product -> product.getName().equals("banan"))
+                        .mapToDouble(product -> product.getUnitPrice() * product.getAmount())
+                        .sum()
+                )
+                .sum();
+        System.out.println(banan);
+
         //4. suma cen wszystkich produktów spozywczych
+        double spozywcze = expenses.stream()
+                .filter(expense -> expense.getType().equals("spozywcze"))
+                .mapToDouble(Expense::getPrice)
+                .sum();
+        System.out.println(spozywcze);
+
+        expenses.stream()
+                .filter(expense -> expense.getDate().isBefore(LocalDate.of(2017, 2, 18)))
+                .forEach(expense -> expense.getProducts()
+                        .forEach(product -> System.out.println(product)));
+        System.out.println(expenses.stream()
+                .filter(expense -> expense.getDate().isEqual(LocalDate.of(2017, 2, 21)))
+                .mapToDouble(expense -> expense.getPrice())
+                .sum());
+        double piwo = expenses.stream()
+                .filter(expense -> expense.getDate().equals(LocalDate.of(2017, 2, 18)))
+                .mapToDouble(expense -> expense.getProducts()
+                        .stream()
+                        .filter(product -> product.getName().equals("piwo"))
+                        .mapToDouble(product -> product.getAmount() * product.getUnitPrice())
+                        .sum()
+                )
+                .sum();
+        System.out.println(piwo);
+        double p = expenses.stream()
+                .mapToDouble(expense -> expense.getProducts()
+                        .stream()
+                        .filter(product -> product.getName().startsWith("p"))
+                        .mapToDouble(product -> product.getAmount() * product.getUnitPrice())
+                        .sum())
+                .sum();
+        System.out.println(p);
+        System.out.println();
+        double sum = expenses.stream()
+                .filter(expense -> expense.getType().equals("spozywcze"))
+                .mapToDouble(expense -> expense.getProducts()
+                        .stream()
+                        .filter(product -> product.getAmount() % 2 == 0)
+                        .mapToDouble(product -> product.getUnitPrice() * product.getAmount())
+                        .sum()
+                )
+                .sum();
+        System.out.println(sum);
+        System.out.println();
+
+        expenses.stream()
+                .map(expense -> expense.getProducts()
+                        .stream()
+                        .max((e1, e2) ->
+                                (e1.getUnitPrice() * e1.getAmount()) >
+                                        (e2.getUnitPrice() * e2.getAmount()) ? 1 : -1)
+                        .get())
+                .forEach(product -> System.out.println(product));
+        System.out.println();
+        System.out.println();
+        System.out.println(expenses.stream()
+                .map(expense -> expense.getProducts()
+                        .stream()
+                        .max((e1, e2) ->
+                                (e1.getUnitPrice() * e1.getAmount()) >
+                                        (e2.getUnitPrice() * e2.getAmount()) ? 1 : -1)
+                        .get())
+                .max((e1, e2) ->
+                        (e1.getUnitPrice() * e1.getAmount()) >
+                                (e2.getUnitPrice() * e2.getAmount()) ? 1 : -1)
+                .get());
 
     }
 
@@ -45,7 +122,7 @@ public class Application {
         products2.add(new Product("farba", 1, 25));
         products2.add(new Product("mlotek", 2, 10));
         products2.add(new Product("gwozdzie", 100, 0.1));
-        Expense expense2 = new Expense("budowlane", products2, 2017, 2, 19);
+        Expense expense2 = new Expense("budowlane", products2, 2017, 2, 21);
 
         List<Product> products3 = new ArrayList<>();
         products3.add(new Product("witamina C", 2, 3));
